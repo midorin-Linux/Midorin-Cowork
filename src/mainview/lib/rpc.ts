@@ -15,6 +15,10 @@ type AppRPCSchema = {
                 params: void;
                 response: null;
             };
+            markdownToHTML: {
+                params: string;
+                response: string;
+            };
         };
     }>;
     webview: RPCSchema;
@@ -39,6 +43,7 @@ type BunRequests = {
     sendMessage: (message: string) => Promise<string>;
     getHistory: () => Promise<ChatCompletionMessage[]>;
     clearHistory: () => Promise<null>;
+    markdownToHTML: (message: string) => Promise<string>;
 };
 
 const requests = rpc.request as BunRequests;
@@ -53,6 +58,10 @@ export async function getHistory(): Promise<ChatCompletionMessage[]> {
 
 export async function clearHistory(): Promise<null> {
     return requests.clearHistory();
+}
+
+export async function markdownToHTML(message: string): Promise<string> {
+    return requests.markdownToHTML(message);
 }
 
 export { createRPC };

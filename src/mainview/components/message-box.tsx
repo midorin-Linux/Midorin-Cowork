@@ -53,8 +53,8 @@ export function MessageBox({ onSendMessage, disabled = false }: MessageBoxProps)
     const canSubmit = promptValue.trim().length > 0 && !form.formState.isSubmitting && !disabled;
 
     return (
-        <div className="w-full rounded-xl border bg-white p-1.5 text-sm shadow-lg hover:border-gray-300">
-            <form className="flex flex-col justify-between gap-1" onSubmit={form.handleSubmit(onSubmit)}>
+        <div className="w-full rounded-2xl border border-border/60 bg-background p-2 text-sm shadow-sm transition-colors focus-within:border-border focus-within:shadow-md hover:border-border">
+            <form className="flex flex-col justify-between gap-1.5" onSubmit={form.handleSubmit(onSubmit)}>
                 <Controller
                     name="userPrompt"
                     control={form.control}
@@ -74,81 +74,35 @@ export function MessageBox({ onSendMessage, disabled = false }: MessageBoxProps)
                                     field.ref(el);
                                     textareaRef.current = el;
                                 }}
-                                className="max-h-50 min-h-10 resize-none overflow-y-auto border-none pb-0 shadow-none focus-visible:ring-0"
+                                className="min-h-10 max-h-50 resize-none overflow-y-auto border-none pb-0 shadow-none placeholder:text-muted-foreground/60 focus-visible:ring-0"
                             />
                             <FieldError className="px-3" errors={[fieldState.error]} />
                         </Field>
                     )}
                 />
 
-                <div className="flex items-center justify-between">
-                    <div className="flex gap-1.5 items-center">
-                        <Button variant="outline" className="size-9 p-0" type="button">
-                            <PaperclipIcon />
+                <div className="flex items-center justify-between px-0.5">
+                    <div className="flex items-center gap-1">
+                        <Button variant="ghost" className="size-8 rounded-lg p-0 text-muted-foreground/70 hover:text-foreground" type="button">
+                            <PaperclipIcon className="size-4" />
                         </Button>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <InputGroupButton variant="outline" size="sm" className="flex size-9 p-0">
-                                    <FadersHorizontalIcon />
+                                <InputGroupButton variant="ghost" size="sm" className="flex size-8 rounded-lg p-0 text-muted-foreground/70 hover:text-foreground">
+                                    <FadersHorizontalIcon className="size-4" />
                                 </InputGroupButton>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent
                                 side="top"
                                 align="start"
-                                className="[--radius:0.95rem] flex flex-col items-start gap-1 p-1.5 w-auto"
-                            >
-                                {/*<DropdownMenuItem*/}
-                                {/*    className="flex w-60 items-center justify-between p-1.5 focus:bg-white"*/}
-                                {/*    onSelect={(e) => e.preventDefault()}*/}
-                                {/*>*/}
-                                {/*    <div className="flex items-center gap-2">*/}
-                                {/*        <GlobeIcon className="size-5" />*/}
-                                {/*        <div className="flex flex-col">*/}
-                                {/*            <span className="text-base">Search</span>*/}
-                                {/*            <span className="text-xs text-gray-600">Disable to not search</span>*/}
-                                {/*        </div>*/}
-                                {/*    </div>*/}
-                                {/*    <Switch />*/}
-                                {/*</DropdownMenuItem>*/}
-                            </DropdownMenuContent>
+                                className="[--radius:0.95rem] flex w-auto flex-col items-start gap-1 p-1.5"
+                            />
                         </DropdownMenu>
                     </div>
 
                     <div className="flex">
-                        {/*<DropdownMenu>*/}
-                        {/*    <DropdownMenuTrigger asChild>*/}
-                        {/*        <InputGroupButton variant="outline" className="h-9 w-auto hover:bg-gray-200">*/}
-                        {/*            Auto*/}
-                        {/*        </InputGroupButton>*/}
-                        {/*    </DropdownMenuTrigger>*/}
-                        {/*    <DropdownMenuContent*/}
-                        {/*        side="top"*/}
-                        {/*        align="end"*/}
-                        {/*        className="[--radius:0.95rem] flex flex-col items-start gap-1 p-1.5 w-auto"*/}
-                        {/*    >*/}
-                        {/*        <DropdownMenuItem className="flex w-60 flex-col items-start gap-1 p-1.5 focus:bg-gray-200">*/}
-                        {/*            <span className="font-base">Auto</span>*/}
-                        {/*            <span className="text-gray-600 font-sm">Automatically select model</span>*/}
-                        {/*        </DropdownMenuItem>*/}
-                        {/*        <Separator />*/}
-                        {/*        <DropdownMenuItem className="flex w-60 flex-col items-start gap-1 p-1.5 focus:bg-gray-200">*/}
-                        {/*            <span className="font-base">V2</span>*/}
-                        {/*            <span className="text-gray-600 font-sm">Flagship model</span>*/}
-                        {/*        </DropdownMenuItem>*/}
-                        {/*        <DropdownMenuItem className="flex w-60 flex-col items-start gap-1 p-1.5 focus:bg-gray-200">*/}
-                        {/*            <span className="font-base">V2-Flash</span>*/}
-                        {/*            <span className="text-gray-600 font-sm">Highly cost-effective model</span>*/}
-                        {/*        </DropdownMenuItem>*/}
-                        {/*        <DropdownMenuItem className="flex w-60 flex-col items-start gap-1 p-1.5 focus:bg-gray-200">*/}
-                        {/*            <span className="font-base">V1.5</span>*/}
-                        {/*            <span className="text-gray-600 font-sm">Excellent knowledge model</span>*/}
-                        {/*        </DropdownMenuItem>*/}
-                        {/*    </DropdownMenuContent>*/}
-                        {/*</DropdownMenu>*/}
-
-                        {/*<Separator orientation="vertical" className="mx-3" />*/}
-                        <Button className="size-9" type="submit" disabled={!canSubmit}>
-                            <PaperPlaneRightIcon />
+                        <Button className="size-8 rounded-lg transition-opacity" type="submit" disabled={!canSubmit}>
+                            <PaperPlaneRightIcon className="size-4" />
                         </Button>
                     </div>
                 </div>

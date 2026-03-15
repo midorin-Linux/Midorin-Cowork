@@ -1,5 +1,6 @@
 import { BrowserView, BrowserWindow, type RPCSchema, Updater } from "electrobun/bun";
 import { ChatHandler } from "./ai/chatHandler";
+import { markdownToHTML } from "./ai/markdownToHTML.ts";
 
 const DEV_SERVER_PORT = 5173;
 const DEV_SERVER_URL = `http://localhost:${DEV_SERVER_PORT}`;
@@ -37,6 +38,10 @@ type AppRPCSchema = {
 				params: [];
 				response: null;
 			};
+			markdownToHTML: {
+				params: [string];
+				response: string;
+			};
 		};
 	}>;
 };
@@ -56,6 +61,9 @@ const rpc = BrowserView.defineRPC<AppRPCSchema>({
 			clearHistory: () => {
 				chatHandler.clearHistory();
 				return null;
+			},
+			markdownToHTML: (message: string) => {
+				return markdownToHTML(message);
 			},
 		},
 	}
