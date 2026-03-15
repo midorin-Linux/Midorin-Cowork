@@ -9,6 +9,15 @@ import {
     type ChatCompletionMessage,
 } from "./lib/rpc";
 
+const appLayoutClasses = {
+    viewport: "h-screen w-screen bg-gray-400 p-2",
+    shell: "relative flex h-full w-full flex-col rounded-2xl bg-background text-foreground",
+    scrollArea: "no-scrollbar flex-1 overflow-y-auto overscroll-contain scroll-smooth",
+    contentWrap: "mx-auto h-full w-full max-w-3xl",
+    composerDock:
+        "w-full shrink-0 rounded-2xl bg-linear-to-t from-background via-background/95 to-transparent px-4 pb-4",
+};
+
 function App() {
     const [messages, setMessages] = useState<ChatCompletionMessage[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -81,10 +90,10 @@ function App() {
     }
 
     return (
-        <div className="bg-gray-400 h-screen w-screen p-2">
-            <div className="relative flex h-full w-full flex-col bg-background text-foreground rounded-2xl">
-                <div className="flex-1 overflow-y-auto overscroll-contain scroll-smooth no-scrollbar">
-                    <div className="mx-auto h-full w-full max-w-3xl">
+        <div className={appLayoutClasses.viewport}>
+            <div className={appLayoutClasses.shell}>
+                <div className={appLayoutClasses.scrollArea}>
+                    <div className={appLayoutClasses.contentWrap}>
                         <ChatMessageList
                             messages={messages}
                             isLoading={isLoading && !streamingRequestId}
@@ -93,8 +102,8 @@ function App() {
                     </div>
                 </div>
 
-                <div className="w-full shrink-0 bg-linear-to-t from-background via-background/95 to-transparent px-4 pb-4 rounded-2xl">
-                    <div className="mx-auto w-full max-w-3xl">
+                <div className={appLayoutClasses.composerDock}>
+                    <div className={appLayoutClasses.contentWrap}>
                         <MessageBox
                             onSendMessage={handleSendMessage}
                             disabled={isLoading}
