@@ -27,30 +27,35 @@ type AppRPCSchema = {
 	bun: RPCSchema<{
 		requests: {
 			sendMessage: {
-				params: [string];
+				params: string;
 				response: string;
 			};
 			getHistory: {
-				params: [];
+				params: void;
 				response: { role: "system" | "user" | "assistant"; content: string }[];
 			};
 			clearHistory: {
-				params: [];
+				params: void;
 				response: null;
 			};
 			markdownToHTML: {
-				params: [string];
+				params: string;
+				response: string;
+			};
+			sendStreamMessage: {
+				params: { message: string; requestId: string };
 				response: string;
 			};
 		};
 	}>;
+	webview: RPCSchema;
 };
 
 const chatHandler = new ChatHandler();
 
 const rpc = BrowserView.defineRPC<AppRPCSchema>({
 	maxRequestTime: 60000,
-	handlers: {
+		handlers: {
 		requests: {
 			sendMessage: async (message: string) => {
 				return await chatHandler.sendMessage(message);
@@ -64,6 +69,17 @@ const rpc = BrowserView.defineRPC<AppRPCSchema>({
 			},
 			markdownToHTML: (message: string) => {
 				return markdownToHTML(message);
+			},
+			sendStreamMessage: async ({
+				message,
+				requestId,
+			}: {
+				message: string;
+				requestId: string;
+			}) => {
+				return await chatHandler.sendStreamMessage(message, (content) => {
+					(rpc as any).send.streamChunk({ requestId, content });
+				});
 			},
 		},
 	}
@@ -80,5 +96,7 @@ const mainWindow = new BrowserWindow({
 	},
 	rpc,
 });
+
+void mainWindow;
 
 console.log("Vanilla Vite app started!");

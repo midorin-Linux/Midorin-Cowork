@@ -5,9 +5,14 @@ import { type ChatCompletionMessage, markdownToHTML } from "@/lib/rpc.ts";
 interface ChatMessageListProps {
     messages: ChatCompletionMessage[];
     isLoading?: boolean;
+    isStreamingActive?: boolean;
 }
 
-export function ChatMessageList({ messages, isLoading = false }: ChatMessageListProps) {
+export function ChatMessageList({
+    messages,
+    isLoading = false,
+    isStreamingActive = false,
+}: ChatMessageListProps) {
     const bottomRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -27,7 +32,15 @@ export function ChatMessageList({ messages, isLoading = false }: ChatMessageList
     return (
         <div className="flex min-h-full flex-col gap-5 px-4 py-8 md:gap-6 md:px-6">
             {visibleMessages.map((message, index) => (
-                <ChatMessage key={`${message.role}-${index}`} message={message} />
+                <ChatMessage
+                    key={`${message.role}-${index}`}
+                    message={message}
+                    isStreaming={
+                        isStreamingActive &&
+                        index === visibleMessages.length - 1 &&
+                        message.role === "assistant"
+                    }
+                />
             ))}
             {isLoading && <LoadingIndicator />}
             <div ref={bottomRef} />
@@ -56,9 +69,10 @@ function LoadingIndicator() {
 
 interface ChatMessageProps {
     message: ChatCompletionMessage;
+    isStreaming?: boolean;
 }
 
-function ChatMessage({ message }: ChatMessageProps) {
+function ChatMessage({ message, isStreaming = false }: ChatMessageProps) {
     const isUser = message.role === "user";
     const [html, setHtml] = useState<string>("");
 
@@ -99,10 +113,10 @@ function ChatMessage({ message }: ChatMessageProps) {
                         [&>h5]:mb-1 [&>h5]:mt-2 [&>h5]:first:mt-0
                         [&>h6]:mb-1 [&>h6]:mt-2 [&>h6]:first:mt-0
                         [&>p]:my-1.5
-                        [&>blockquote]:mt-6 [&>blockquote]:pl-6
+                        [&>blockquote]:my-3 [&>blockquote]:pl-3 [&>blockquote]:italic [&>blockquote]:border-l-2 [&>blockquote]:text-gray-600
                         [&>div]:my-2.5
-                        [&>ol]:my-1.5 [&>ol]:ml-5 [&>ol]:space-y-0.5
-                        [&>ul]:my-1.5 [&>ul]:ml-5 [&>ul]:space-y-0.5
+                        [&>ol]:my-1.5 [&>ol]:ml-5 [&>ol]:space-y-5
+                        [&>ul]:my-1.5 [&>ul]:ml-5 [&>ul]:space-y-5
                         [&>li]:-ml-5 [&>li]:pl-0.5
                         [&>li>input]:mr-1.5
                         [&>img]:my-2
@@ -114,6 +128,10 @@ function ChatMessage({ message }: ChatMessageProps) {
                     "
                     dangerouslySetInnerHTML={{ __html: html }}
                 />
+            )}
+
+            {!isUser && isStreaming && (
+                <span className="mt-1 inline-block h-5 w-0.5 animate-pulse bg-muted-foreground/50" />
             )}
 
             {isUser && <div className="mt-0.5 w-7 shrink-0" />}

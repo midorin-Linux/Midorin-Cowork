@@ -1,16 +1,47 @@
 import { MessageBox } from "@/components/message-box.tsx";
 import { ChatMessageList } from "@/components/chat-message.tsx";
-import { useState, useEffect } from "react";
-import { sendMessage, getHistory, type ChatCompletionMessage } from "./lib/rpc";
+import { useEffect, useRef, useState } from "react";
+import {
+    addStreamChunkListener,
+    getHistory,
+    sendMessage,
+    sendStreamMessage,
+    type ChatCompletionMessage,
+} from "./lib/rpc";
 
 function App() {
     const [messages, setMessages] = useState<ChatCompletionMessage[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [streamingEnabled, setStreamingEnabled] = useState(true);
+    const [streamingRequestId, setStreamingRequestId] = useState<string | null>(null);
+    const streamingRequestIdRef = useRef<string | null>(null);
 
     useEffect(() => {
         getHistory()
             .then((history) => setMessages(history))
             .catch((err) => console.error("getHistory error:", err));
+
+        const unsubscribe = addStreamChunkListener(({ requestId, content }) => {
+            setMessages((prev) => {
+                const next = [...prev];
+                const index = next.length - 1;
+
+                if (index < 0 || next[index].role !== "assistant") {
+                    return prev;
+                }
+
+                if (streamingRequestIdRef.current !== requestId) {
+                    return prev;
+                }
+
+                next[index] = { role: "assistant", content };
+                return next;
+            });
+        });
+
+        return () => {
+            unsubscribe();
+        };
     }, []);
 
     async function handleSendMessage(message: string) {
@@ -19,12 +50,32 @@ function App() {
         setIsLoading(true);
 
         try {
+            if (streamingEnabled) {
+                const requestId = crypto.randomUUID();
+                streamingRequestIdRef.current = requestId;
+                setStreamingRequestId(requestId);
+                setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
+
+                const fullReply = await sendStreamMessage({ message, requestId });
+                setMessages((prev) => {
+                    const next = [...prev];
+                    const index = next.length - 1;
+                    if (index >= 0 && next[index].role === "assistant") {
+                        next[index] = { role: "assistant", content: fullReply };
+                    }
+                    return next;
+                });
+                return;
+            }
+
             const reply = await sendMessage(message);
             const assistantMessage: ChatCompletionMessage = { role: "assistant", content: reply };
             setMessages((prev) => [...prev, assistantMessage]);
         } catch (err) {
             console.error("RPC sendMessage error:", err);
         } finally {
+            streamingRequestIdRef.current = null;
+            setStreamingRequestId(null);
             setIsLoading(false);
         }
     }
@@ -33,13 +84,22 @@ function App() {
         <div className="relative flex h-screen w-full flex-col bg-background text-foreground">
             <div className="flex-1 overflow-y-auto overscroll-contain scroll-smooth">
                 <div className="mx-auto h-full w-full max-w-3xl">
-                    <ChatMessageList messages={messages} isLoading={isLoading} />
+                    <ChatMessageList
+                        messages={messages}
+                        isLoading={isLoading && !streamingRequestId}
+                        isStreamingActive={Boolean(streamingRequestId)}
+                    />
                 </div>
             </div>
 
             <div className="w-full shrink-0 bg-linear-to-t from-background via-background/95 to-transparent px-4 pb-4 pt-3">
                 <div className="mx-auto w-full max-w-3xl">
-                    <MessageBox onSendMessage={handleSendMessage} disabled={isLoading} />
+                    <MessageBox
+                        onSendMessage={handleSendMessage}
+                        disabled={isLoading}
+                        streamingEnabled={streamingEnabled}
+                        onStreamingEnabledChange={setStreamingEnabled}
+                    />
                 </div>
             </div>
         </div>

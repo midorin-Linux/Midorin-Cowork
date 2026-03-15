@@ -10,9 +10,13 @@ import { Textarea } from "@/components/ui/textarea";
 import {
     DropdownMenu,
     DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { InputGroupButton } from "@/components/ui/input-group";
+import { Switch } from "@/components/ui/switch";
 
 const formSchema = z.object({
     userPrompt: z.string().min(1, {
@@ -25,9 +29,16 @@ type MessageFormValues = z.infer<typeof formSchema>;
 interface MessageBoxProps {
     onSendMessage: (message: string) => void;
     disabled?: boolean;
+    streamingEnabled: boolean;
+    onStreamingEnabledChange: (enabled: boolean) => void;
 }
 
-export function MessageBox({ onSendMessage, disabled = false }: MessageBoxProps) {
+export function MessageBox({
+    onSendMessage,
+    disabled = false,
+    streamingEnabled,
+    onStreamingEnabledChange,
+}: MessageBoxProps) {
     const form = useForm<MessageFormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -96,7 +107,24 @@ export function MessageBox({ onSendMessage, disabled = false }: MessageBoxProps)
                                 side="top"
                                 align="start"
                                 className="[--radius:0.95rem] flex w-auto flex-col items-start gap-1 p-1.5"
-                            />
+                            >
+                                <DropdownMenuLabel>Response</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                    className="flex min-w-56 items-center justify-between gap-3"
+                                    onSelect={(event) => {
+                                        event.preventDefault();
+                                        onStreamingEnabledChange(!streamingEnabled);
+                                    }}
+                                >
+                                    <span className="text-sm">Streaming</span>
+                                    <Switch
+                                        checked={streamingEnabled}
+                                        onCheckedChange={onStreamingEnabledChange}
+                                        aria-label="Toggle streaming"
+                                    />
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
 

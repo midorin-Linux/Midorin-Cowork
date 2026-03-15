@@ -19,8 +19,7 @@ export function markdownToHTML(message: string) {
             paragraph: children =>
                 `<p class="leading-7">${children}</p>`,
 
-            blockquote: children =>
-                `<blockquote class="border-l-2 italic">${children}</blockquote>`,
+            blockquote: children => `<blockquote>${children}</blockquote>`,
 
             code: (children, meta) => {
                 const language = meta?.language;

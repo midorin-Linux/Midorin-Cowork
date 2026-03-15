@@ -1,4 +1,4 @@
-import { createChatCompletion } from "./openaiClient.ts";
+import { createChatCompletion, createChatCompletionStream } from "./openaiClient.ts";
 import type { ChatCompletionMessage } from "./types.ts";
 
 const SYSTEM_PROMPT = "You are a helpful assistant.";
@@ -28,6 +28,29 @@ export class ChatHandler {
         });
 
         return assistantMessage.content;
+    }
+
+    async sendStreamMessage(
+        userMessage: string,
+        onChunk: (currentContent: string) => void,
+    ): Promise<string> {
+        this.history.push({
+            role: "user",
+            content: userMessage,
+        });
+
+        let currentContent = "";
+        const assistantContent = await createChatCompletionStream(this.history, (chunk) => {
+            currentContent += chunk;
+            onChunk(currentContent);
+        });
+
+        this.history.push({
+            role: "assistant",
+            content: assistantContent,
+        });
+
+        return assistantContent;
     }
 
     getHistory(): ChatCompletionMessage[] {
