@@ -89,8 +89,8 @@ const mainWindow = new BrowserWindow({
 	title: "Midorin Cowork",
 	url,
 	frame: {
-		width: 900,
-		height: 700,
+		width: 1000,
+		height: 750,
 		x: 200,
 		y: 200,
 	},

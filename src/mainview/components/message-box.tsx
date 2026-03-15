@@ -18,23 +18,6 @@ import {
 import { InputGroupButton } from "@/components/ui/input-group";
 import { Switch } from "@/components/ui/switch";
 
-const messageBoxClasses = {
-    container:
-        "w-full rounded-2xl border border-border/60 bg-background p-2 text-sm shadow-sm transition-colors hover:border-border focus-within:border-border focus-within:shadow-md",
-    form: "flex flex-col justify-between gap-1.5",
-    textarea:
-        "min-h-10 max-h-50 resize-none overflow-y-auto border-none pb-0 shadow-none placeholder:text-muted-foreground/60 focus-visible:ring-0",
-    fieldError: "px-3",
-    controls: "flex items-center justify-between px-0.5",
-    controlsLeft: "flex items-center gap-1",
-    ghostIconButton: "size-8 rounded-lg p-0 text-muted-foreground/70 hover:text-foreground",
-    icon: "size-4",
-    dropdownContent: "[--radius:0.95rem] flex w-auto flex-col items-start gap-1 p-1.5",
-    dropdownItem: "flex min-w-56 items-center justify-between gap-3",
-    controlsRight: "flex",
-    submitButton: "size-8 rounded-lg transition-opacity",
-};
-
 const formSchema = z.object({
     userPrompt: z.string().min(1, {
         message: "Message must be at least 1 character.",
@@ -81,8 +64,8 @@ export function MessageBox({
     const canSubmit = promptValue.trim().length > 0 && !form.formState.isSubmitting && !disabled;
 
     return (
-        <div className={messageBoxClasses.container}>
-            <form className={messageBoxClasses.form} onSubmit={form.handleSubmit(onSubmit)}>
+        <div className="w-full rounded-2xl border border-border/60 bg-background p-2 text-sm shadow-sm transition-colors hover:border-border focus-within:border-border focus-within:shadow-md">
+            <form className="flex flex-col justify-between gap-1.5" onSubmit={form.handleSubmit(onSubmit)}>
                 <Controller
                     name="userPrompt"
                     control={form.control}
@@ -102,33 +85,33 @@ export function MessageBox({
                                     field.ref(el);
                                     textareaRef.current = el;
                                 }}
-                                className={messageBoxClasses.textarea}
+                                className="min-h-10 max-h-50 resize-none overflow-y-auto border-none pb-0 shadow-none placeholder:text-muted-foreground/60 focus-visible:ring-0"
                             />
-                            <FieldError className={messageBoxClasses.fieldError} errors={[fieldState.error]} />
+                            <FieldError className="px-3" errors={[fieldState.error]} />
                         </Field>
                     )}
                 />
 
-                <div className={messageBoxClasses.controls}>
-                    <div className={messageBoxClasses.controlsLeft}>
-                        <Button variant="ghost" className={messageBoxClasses.ghostIconButton} type="button">
-                            <PaperclipIcon className={messageBoxClasses.icon} />
+                <div className="flex items-center justify-between px-0.5">
+                    <div className="flex items-center gap-1">
+                        <Button variant="ghost" className="size-8 rounded-lg p-0 text-muted-foreground/70 hover:text-foreground" type="button">
+                            <PaperclipIcon className="size-4" />
                         </Button>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <InputGroupButton variant="ghost" size="sm" className={messageBoxClasses.ghostIconButton}>
-                                    <FadersHorizontalIcon className={messageBoxClasses.icon} />
+                                <InputGroupButton variant="ghost" size="sm" className="size-8 rounded-lg p-0 text-muted-foreground/70 hover:text-foreground">
+                                    <FadersHorizontalIcon className="size-4" />
                                 </InputGroupButton>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent
                                 side="top"
                                 align="start"
-                                className={messageBoxClasses.dropdownContent}
+                                className="[--radius:0.95rem] flex w-auto flex-col items-start gap-1 p-1.5"
                             >
                                 <DropdownMenuLabel>Response</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
-                                    className={messageBoxClasses.dropdownItem}
+                                    className="flex min-w-56 items-center justify-between gap-3"
                                     onSelect={(event) => {
                                         event.preventDefault();
                                         onStreamingEnabledChange(!streamingEnabled);
@@ -145,9 +128,9 @@ export function MessageBox({
                         </DropdownMenu>
                     </div>
 
-                    <div className={messageBoxClasses.controlsRight}>
-                        <Button className={messageBoxClasses.submitButton} type="submit" disabled={!canSubmit}>
-                            <PaperPlaneRightIcon className={messageBoxClasses.icon} />
+                    <div className="flex">
+                        <Button className="size-8 rounded-lg transition-opacity" type="submit" disabled={!canSubmit}>
+                            <PaperPlaneRightIcon className="size-4" />
                         </Button>
                     </div>
                 </div>

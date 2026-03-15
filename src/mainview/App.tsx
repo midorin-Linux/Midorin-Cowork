@@ -1,5 +1,7 @@
 import { MessageBox } from "@/components/message-box.tsx";
 import { ChatMessageList } from "@/components/chat-message.tsx";
+import {SidebarProvider, SidebarTrigger} from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/app-sidebar"
 import { useEffect, useRef, useState } from "react";
 import {
     addStreamChunkListener,
@@ -9,20 +11,12 @@ import {
     type ChatCompletionMessage,
 } from "./lib/rpc";
 
-const appLayoutClasses = {
-    viewport: "h-screen w-screen bg-gray-400 p-2",
-    shell: "relative flex h-full w-full flex-col rounded-2xl bg-background text-foreground",
-    scrollArea: "no-scrollbar flex-1 overflow-y-auto overscroll-contain scroll-smooth",
-    contentWrap: "mx-auto h-full w-full max-w-3xl",
-    composerDock:
-        "w-full shrink-0 rounded-2xl bg-linear-to-t from-background via-background/95 to-transparent px-4 pb-4",
-};
-
 function App() {
     const [messages, setMessages] = useState<ChatCompletionMessage[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [streamingEnabled, setStreamingEnabled] = useState(true);
     const [streamingRequestId, setStreamingRequestId] = useState<string | null>(null);
+    const [currentView, setCurrentView] = useState<"chat" | "settings">("chat");
     const streamingRequestIdRef = useRef<string | null>(null);
 
     useEffect(() => {
@@ -90,30 +84,45 @@ function App() {
     }
 
     return (
-        <div className={appLayoutClasses.viewport}>
-            <div className={appLayoutClasses.shell}>
-                <div className={appLayoutClasses.scrollArea}>
-                    <div className={appLayoutClasses.contentWrap}>
-                        <ChatMessageList
-                            messages={messages}
-                            isLoading={isLoading && !streamingRequestId}
-                            isStreamingActive={Boolean(streamingRequestId)}
-                        />
-                    </div>
-                </div>
+        <SidebarProvider className="bg-gray-100">
+            <AppSidebar onNavigate={setCurrentView} />
+            <main className="h-screen w-screen p-1.5">
+                <div className="relative flex h-full w-full flex-col rounded-md bg-background text-foreground">
+                    <SidebarTrigger className="absolute rounded-2xl m-1" />
 
-                <div className={appLayoutClasses.composerDock}>
-                    <div className={appLayoutClasses.contentWrap}>
-                        <MessageBox
-                            onSendMessage={handleSendMessage}
-                            disabled={isLoading}
-                            streamingEnabled={streamingEnabled}
-                            onStreamingEnabledChange={setStreamingEnabled}
-                        />
-                    </div>
+                    {currentView === "settings" ? (
+                        <div className="flex flex-1 items-center justify-center">
+                            <div className="w-full max-w-3xl p-8">
+                                <h1 className="text-2xl font-semibold mb-4">Settings</h1>
+                                {/* ここに設定項目を追加 */}
+                            </div>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="no-scrollbar flex-1 overflow-y-auto overscroll-contain scroll-smooth">
+                                <div className="mx-auto h-full w-full max-w-3xl">
+                                    <ChatMessageList
+                                        messages={messages}
+                                        isLoading={isLoading && !streamingRequestId}
+                                        isStreamingActive={Boolean(streamingRequestId)}
+                                    />
+                                </div>
+                            </div>
+                            <div className="w-full shrink-0 rounded-2xl bg-linear-to-t from-background via-background/95 to-transparent px-4 pb-4">
+                                <div className="mx-auto h-full w-full max-w-3xl">
+                                    <MessageBox
+                                        onSendMessage={handleSendMessage}
+                                        disabled={isLoading}
+                                        streamingEnabled={streamingEnabled}
+                                        onStreamingEnabledChange={setStreamingEnabled}
+                                    />
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
-            </div>
-        </div>
+            </main>
+        </SidebarProvider>
     );
 }
 
