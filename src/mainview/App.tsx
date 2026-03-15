@@ -81,25 +81,27 @@ function App() {
     }
 
     return (
-        <div className="relative flex h-screen w-full flex-col bg-background text-foreground">
-            <div className="flex-1 overflow-y-auto overscroll-contain scroll-smooth">
-                <div className="mx-auto h-full w-full max-w-3xl">
-                    <ChatMessageList
-                        messages={messages}
-                        isLoading={isLoading && !streamingRequestId}
-                        isStreamingActive={Boolean(streamingRequestId)}
-                    />
+        <div className="bg-gray-400 h-screen w-screen p-2">
+            <div className="relative flex h-full w-full flex-col bg-background text-foreground rounded-2xl">
+                <div className="flex-1 overflow-y-auto overscroll-contain scroll-smooth no-scrollbar">
+                    <div className="mx-auto h-full w-full max-w-3xl">
+                        <ChatMessageList
+                            messages={messages}
+                            isLoading={isLoading && !streamingRequestId}
+                            isStreamingActive={Boolean(streamingRequestId)}
+                        />
+                    </div>
                 </div>
-            </div>
 
-            <div className="w-full shrink-0 bg-linear-to-t from-background via-background/95 to-transparent px-4 pb-4">
-                <div className="mx-auto w-full max-w-3xl">
-                    <MessageBox
-                        onSendMessage={handleSendMessage}
-                        disabled={isLoading}
-                        streamingEnabled={streamingEnabled}
-                        onStreamingEnabledChange={setStreamingEnabled}
-                    />
+                <div className="w-full shrink-0 bg-linear-to-t from-background via-background/95 to-transparent px-4 pb-4 rounded-2xl">
+                    <div className="mx-auto w-full max-w-3xl">
+                        <MessageBox
+                            onSendMessage={handleSendMessage}
+                            disabled={isLoading}
+                            streamingEnabled={streamingEnabled}
+                            onStreamingEnabledChange={setStreamingEnabled}
+                        />
+                    </div>
                 </div>
             </div>
         </div>
