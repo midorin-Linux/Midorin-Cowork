@@ -92,7 +92,7 @@ function App() {
                 </div>
             </div>
 
-            <div className="w-full shrink-0 bg-linear-to-t from-background via-background/95 to-transparent px-4 pb-4 pt-3">
+            <div className="w-full shrink-0 bg-linear-to-t from-background via-background/95 to-transparent px-4 pb-4">
                 <div className="mx-auto w-full max-w-3xl">
                     <MessageBox
                         onSendMessage={handleSendMessage}

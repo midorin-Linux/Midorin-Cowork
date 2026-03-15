@@ -25,7 +25,7 @@ export function markdownToHTML(message: string) {
                 const language = meta?.language;
                 const lang = language ? ` data-language="${language}"` : '';
                 const langLabel = language
-                    ? `<div class="flex items-center justify-between rounded-t-lg border-b border-border/60 bg-muted/50 text-xs text-muted-foreground"><span>${language}</span></div>`
+                    ? `<div class="flex items-center justify-between rounded-t-lg px-12 py-2 bg-muted/50 text-xs text-muted-foreground"><span>${language}</span></div>`
                     : '';
                 return `<div class="overflow-hidden rounded-lg border border-border/60 bg-muted/40">${langLabel}<pre class="overflow-x-auto text-sm leading-relaxed"><code${lang} class="font-mono">${children}</code></pre></div>`;
             },
@@ -33,18 +33,18 @@ export function markdownToHTML(message: string) {
             list: (children, { ordered, start }: { ordered: boolean; start?: number }) => {
                 if (ordered) {
                     const startAttr = start != null && start !== 1 ? ` start="${start}"` : '';
-                    return `<ol class="list-decimal"${startAttr}>${children}</ol>`;
+                    return `<ol class="list-decimal space-y-1.5"${startAttr}>${children}</ol>`;
                 }
-                return `<ul class="list-disc">${children}</ul>`;
+                return `<ul class="list-disc space-y-1.5">${children}</ul>`;
             },
 
             listItem: (children, meta) => {
                 const checked = meta?.checked;
                 if (checked != null) {
                     const checkbox = checked
-                        ? '<input type="checkbox" checked disabled class="accent-primary align-middle" />'
-                        : '<input type="checkbox" disabled class="align-middle" />';
-                    return `<li class="list-none">${checkbox}${children}</li>`;
+                        ? '<input type="checkbox" checked disabled class="accent-primary mt-1 mr-2 size-4 shrink-0" />'
+                        : '<input type="checkbox" disabled class="mt-1 mr-2 size-4 shrink-0" />';
+                    return `<li class="flex items-start list-none">${checkbox}<span>${children}</span></li>`;
                 }
                 return `<li>${children}</li>`;
             },

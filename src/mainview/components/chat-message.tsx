@@ -115,10 +115,13 @@ function ChatMessage({ message, isStreaming = false }: ChatMessageProps) {
                         [&>p]:my-1.5
                         [&>blockquote]:my-3 [&>blockquote]:pl-3 [&>blockquote]:italic [&>blockquote]:border-l-2 [&>blockquote]:text-gray-600
                         [&>div]:my-2.5
-                        [&>ol]:my-1.5 [&>ol]:ml-5 [&>ol]:space-y-5
-                        [&>ul]:my-1.5 [&>ul]:ml-5 [&>ul]:space-y-5
-                        [&>li]:-ml-5 [&>li]:pl-0.5
-                        [&>li>input]:mr-1.5
+                        [&>ol]:my-3 [&>ol]:pl-5 [&>ol]:list-outside
+                        [&>ul]:my-3 [&>ul]:pl-5 [&>ul]:list-outside
+                        [&_li]:pl-1 [&_li>p]:inline-block [&_li>p]:my-0
+                        [&>ol>li]:marker:text-muted-foreground/80
+                        [&>ul>li]:marker:text-muted-foreground/80
+                        [&_ul]:my-1.5 [&_ol]:my-1.5
+                        [&_li]:mt-1.5
                         [&>img]:my-2
                         [&>code]:px-[0.3rem] [&>code]:py-[0.2rem]
                         [&_pre]:p-3
